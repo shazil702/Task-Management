@@ -1,5 +1,5 @@
 from rest_framework_simplejwt.tokens import Token
-from .models import User
+from .models import *
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 
@@ -31,3 +31,20 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.set_password(validated['password'])
         user.save()
         return user
+class ProjectSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only = True)
+    class Meta:
+        model = Project
+        fields = '__all__'
+    
+    def create(self, validated_data):
+        user = self.context['request'].user
+        validated_data['user'] = user
+        return super().create(validated_data)
+
+class ToDoSerializer(serializers.ModelSerializer):
+    project = serializers.PrimaryKeyRelatedField(queryset=Project.objects.all())
+
+    class Meta:
+        model = ToDo
+        fields = '__all__'

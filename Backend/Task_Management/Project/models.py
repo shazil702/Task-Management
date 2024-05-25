@@ -12,13 +12,17 @@ class User(AbstractUser):
         return self.username
 
 class Project(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=100)
     description = models.TextField()
     
     def __str__(self):
         return self.name
 class ToDo(models.Model):
-    project = models.OneToOneField(Project, on_delete=models.CASCADE, related_name="project")
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="project")
     name = models.CharField(max_length=100)
     completed = models.BooleanField(default=False)
-    date = models.DateTimeField()
+    date = models.DateField()
+
+    def __str__(self):
+        return self.name
